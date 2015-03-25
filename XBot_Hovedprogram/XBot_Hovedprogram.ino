@@ -6,6 +6,7 @@ boolean post1 = false;
 boolean post2 = false;
 boolean post3 = false;
 boolean post4 = false;
+boolean post5 = false; // Kosepost, skal brukes til touch-kos.
 
 /*
 Sett inn initialverdier til post1
@@ -27,6 +28,10 @@ int speakerOut = 9;
 int micInput = A0;
 int micValue = 0;
 int frequency = 880;
+
+/*
+Sett inn initialverdier til post4
+*/
 
 /*
 Sett inn initialverdier til post4
@@ -54,6 +59,12 @@ void setup(){
    /*
   sett inn setup til post4
   */
+  
+  
+   /*
+  sett inn setup til post5
+  */
+  
 }
 
 void loop(){
@@ -82,6 +93,11 @@ void loop(){
   }
   if (post4 == true){
     /* sett inn kode for oppførsel på post4
+    ...
+    */
+  }
+  if (post5 == true){
+    /* sett inn kode for oppførsel på post5
     ...
     */
   }
