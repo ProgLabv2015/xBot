@@ -214,7 +214,7 @@ void loop(){
     post5 = false;
     timePost5 = millis();
     soundP5 = false;
-    hunger++;
+    hunger4++;
   }
   
   /* Dette kan tas med for å teste at tidsvariablene fungerer
