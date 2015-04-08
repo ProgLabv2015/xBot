@@ -43,8 +43,8 @@ int micValue = 0;
 int frequency = 880;
 
 /*
-Sett inn initialverdier til post4
-*/
+Sett inn initialverdier til post4*/
+int hunger4 = 0;
 
 /*
 Sett inn initialverdier til post4
@@ -96,7 +96,7 @@ void loop(){
   if (time - timePost3 > 30000){
      post3 = true;
   }
-  if (time - timePost4 > 40000){
+  if ((time - timePost4 > 40000) || (hunger4 > 5)){
      post4 = true;
   }
   if (time - timePost5 > 50000){
@@ -117,7 +117,7 @@ void loop(){
     //dette er det siste som gjøres på posten
     post1 = false;
     timePost1 = millis();
-    
+    hunger4++;
   }  
   if (post2 == true && sensorP2 == true){
     /* sett inn kode for oppførsel på post2
@@ -127,6 +127,7 @@ void loop(){
      //dette er det siste som gjøres på posten
     post2 = false;
     timePost2 = millis();
+    hunger4++;
   }
   if (post3 == true && sensorP3 == true){
     /* sett inn kode for oppførsel på post3
@@ -136,13 +137,13 @@ void loop(){
      //dette er det siste som gjøres på posten
     post3 = false;
     timePost3 = millis();
+    hunger4++;
   }
   if (post4 == true && sensorP4 == true){
-    /* sett inn kode for oppførsel på post4
-    ...
-    */
-    
-     //dette er det siste som gjøres på posten
+    hunger4 = 0;
+    //Plab_motors.turnRight(ZUMO_SPEED,45);
+    //Plab_motors.turnLeft(ZUMO_SPEED,45);
+    delay(500);
     post4 = false;
     timePost4 = millis();
   }
@@ -154,6 +155,7 @@ void loop(){
      //dette er det siste som gjøres på posten
     post5 = false;
     timePost5 = millis();
+    hunger++;
   }
   
   Serial.println(time);
