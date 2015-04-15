@@ -1,6 +1,29 @@
-#include <PLab_ZumoMotors.h>
 
-PLab_ZumoMotors PLab_motors;
+
+
+// TIL KJØRING
+#include <QTRSensors.h>
+#include <ZumoReflectanceSensorArray.h>
+#include <ZumoMotors.h>
+#include <Pushbutton.h>
+
+ZumoReflectanceSensorArray reflectanceSensors;
+ZumoMotors motors;
+Pushbutton button(ZUMO_BUTTON);
+int lastError = 0;
+
+// This is the maximum speed the motors will be allowed to turn.
+// (400 lets the motors go at top speed; decrease to impose a speed limit)
+const int MAX_SPEED = 200;
+// Set constants for PID control
+const float KP = 0.5;  // Proportional constant
+const float KD = 6;    // Derivative constant
+const int SV = 2500; // Set-value for position (in the middle of sensors)
+
+// TIL KJØRING FERDIG
+
+
+
 //For å finne ut hvilken post den er på
 boolean post1 = false;
 boolean post2 = false;
@@ -45,11 +68,10 @@ Sett inn initialverdier til post2
 
 // til Post 3
 boolean happy3;
-int count = 0;
 int lys = 0;
 const int ledPin1 = 12;
 const int ledPin2 = 11;
-int speakerOut = 9;
+int speakerOut = 3;
 int frequency = 880;
 
 
@@ -68,8 +90,9 @@ int touchInputL=4;
 
 
 void setup(){
- 
+  
 
+  
   /*
   sett inn setup til post1
   */
@@ -99,9 +122,40 @@ void setup(){
   pinMode(touchInputR, INPUT);
   pinMode(touchInputL, INPUT);
   
+  
+  
+    // TIL KJØRING
+  reflectanceSensors.init();
+  button.waitForButton();  // wait to start calibration
+
+  // Wait 1 second and then begin automatic sensor calibration
+  // by rotating in place to sweep the sensors over the line
+  delay(1000);
+  int i;
+  for(i = 0; i < 80; i++)
+  {
+    if ((i > 10 && i <= 30) || (i > 50 && i <= 70))
+      motors.setSpeeds(-200, 200);
+    else
+      motors.setSpeeds(200, -200);
+      
+    reflectanceSensors.calibrate();
+
+    // Since our counter runs to 80, the total delay will be
+    // 80*20 = 1600 ms.
+    delay(20);
+  }
+  motors.setSpeeds(0,0);
+
+  // Turn off LED to indicate we are through with calibration
+  digitalWrite(13, LOW);
+  
+  // Wait for the user button to be pressed and released
+  button.waitForButton();
+  // TIL KJØRING FERDIG
 }
 
-void getCount(){
+int getCount(){
  micValue = analogRead(micInput);
   if (micValue > 500){
     count +=1;
@@ -121,7 +175,124 @@ void getCount(){
   }
 }
 
+/** One snore lasts ca 4 seconds. If you write 12, there will be 3 snores. If you write 11,
+there will therefore be 2 snores, and it'll last ca 8 seconds. */
+void snoore(int durationSeconds){
+  for(int i = 0; i < durationSeconds/4; i++){
+    for(int i = 0; i < 220; i += 5){
+       tone(speakerOut, 31 + i, 23);
+       delay(24); 
+    }
+    delay(150);
+    for(int i = 1800; i > 0; i -= 25){
+      tone(speakerOut, 31 + i, 25);
+      delay(25);
+    }
+    delay(1000);
+   }
+ }
+
+
+void happy(int durationSeconds){
+  int tones[] = {2093, 2349, 2794, 3136, 3520, 3951};
+  int randnum;
+  int milliseconds = 0;
+  boolean turn = true;
+  
+  while(milliseconds < durationSeconds*1000){
+      randnum = random(0,6);
+    if(turn){
+      tone(speakerOut, tones[randnum], 180*1.2);
+      delay(200*1.2);
+      milliseconds += 200*1.2;
+      turn = false;
+    }else{
+      tone(speakerOut, tones[randnum], 80*1.2);
+      delay(100*1.2);
+      milliseconds += 100*1.2;
+      turn = true;
+    }
+  }
+}
+
+void sad(int durationSeconds){
+  int tones[] = {123,131,117,110};
+  int randnum;
+  int milliseconds;
+  
+  while(milliseconds < durationSeconds*1000){
+    randnum = random(0,4);
+    tone(speakerOut, tones[randnum]*4, 800);
+    delay(800); 
+     milliseconds += 800; 
+  }
+} 
+
+void driving(){
+  unsigned int sensors[6];
+
+  int pv = reflectanceSensors.readLine(sensors);
+  
+  // Our "error" is how far we are away from the center of the line, which
+  // corresponds to position 2500.
+  int error = pv - SV; 
+  // do PD computation ( Integral is not used)
+  int speedDifference = KP*error + KD * (error - lastError);
+  
+  lastError = error;
+
+  // Get individual motor speeds.  The sign of speedDifference
+  // determines if the robot turns left or right.
+  int m1Speed = MAX_SPEED + speedDifference;
+  int m2Speed = MAX_SPEED - speedDifference;
+  
+  if((sensors[5] > 40 && sensors[5] < 160) && (sensors[0] > 40 && sensors[0] < 160) && post1 == true){
+    motors.setSpeeds(0,0);
+    delay(2000);
+  }
+    if((sensors[5] > 790 && sensors[5] < 860) && (sensors[0] > 790 && sensors[0] < 860) && post2 == true){
+    motors.setSpeeds(0,0);
+    delay(3000);
+  }
+    if((sensors[5] > 670 && sensors[5] < 770) && (sensors[0] > 670 && sensors[0] < 770) && post3 == true){
+    motors.setSpeeds(0,0);
+    delay(4000);
+  }
+    if((sensors[5] > 200 && sensors[5] < 300) && (sensors[0] > 200 && sensors[0] < 300) && post4 == true){
+    motors.setSpeeds(0,0);
+    delay(5000);
+  }
+    if((sensors[5] > 600 && sensors[5] < 650) && (sensors[0] > 600 && sensors[0] < 650) && post5 == true){
+    motors.setSpeeds(0,0);
+    delay(6000);
+  }
+
+  // Here we constrain our motor speeds to be between 0 and MAX_SPEED.
+  // Generally speaking, one motor will always be turning at MAX_SPEED
+  // and the other will be at MAX_SPEED-|speedDifference| if that is positive,
+  // else it will be stationary.  For some applications, you might want to
+  // allow the motor speed to go negative so that it can spin in reverse.
+  else{
+  if (m1Speed < 0)
+    m1Speed = 0;
+  if (m2Speed < 0)
+    m2Speed = 0;
+  if (m1Speed > MAX_SPEED)
+    m1Speed = MAX_SPEED;
+  if (m2Speed > MAX_SPEED)
+    m2Speed = MAX_SPEED;
+
+  motors.setSpeeds(m1Speed, m2Speed);
+  delay(50);
+  motors.setSpeeds(0,0);
+  }
+}
+  
+
 void loop(){
+
+  happy(10);
+  
   /*sett inn kode for når de forskjellige tilstandene skal være true og false
   */
   time = millis();
@@ -184,6 +355,10 @@ void loop(){
    if(count>2 && count < 20){
     soundP1 = true;
   }
+  
+  // KJØRING
+  
+  
   if (soundP1){
     post1 = false;
     timePost1 = millis();
@@ -204,7 +379,7 @@ void loop(){
    if(count>20 && count < 40){
     soundP2 = true;
   }
-  if(suondP2){
+  if(soundP2){
    post2 = false;
     timePost2 = millis();
     hunger4++;
