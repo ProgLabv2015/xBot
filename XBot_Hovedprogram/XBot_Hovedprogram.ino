@@ -86,7 +86,8 @@ boolean happy5;
 int touchValueL;
 int touchValueR;
 int touchInputR=2;
-int touchInputL=4;
+int touchInputL=3;
+const int ledPin5 = 6;
 
 
 void setup(){
@@ -121,6 +122,8 @@ void setup(){
    // post 5
   pinMode(touchInputR, INPUT);
   pinMode(touchInputL, INPUT);
+  pinMode(ledPin5, OUTPUT);
+  digitalWrite(ledPin5, LOW);
   
   
   
@@ -427,12 +430,21 @@ void loop(){
     
     touchValueR = digitalRead(touchInputR);
      touchValueL = digitalRead(touchInputL);
-    if (touchValueR == HIGH){
-      // do something
+    if (touchValueR == HIGH) || touchValueL == HIGH{
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
     
-    } else if (touchValueL == HIGH){
-      // do something
-    }
+    } 
      //dette er det siste som gjøres på posten
     post5 = false;
     timePost5 = millis();
