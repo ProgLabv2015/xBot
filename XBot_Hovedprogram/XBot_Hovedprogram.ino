@@ -37,12 +37,6 @@ boolean sensorP3 = false;
 boolean sensorP4 = false;
 boolean sensorP5 = false;
 
-boolean soundP1 = false;
-boolean soundP2 = false;
-boolean soundP3 = false;
-boolean soundP4 = false;
-boolean soundP5 = false;
-
 long time= millis();
 long timePost1 = millis();
 long timePost2 = millis();
@@ -134,11 +128,12 @@ void setup(){
   int i;
   for(i = 0; i < 80; i++)
   {
-    if ((i > 10 && i <= 30) || (i > 50 && i <= 70))
+    if ((i > 10 && i <= 30) || (i > 50 && i <= 70)){
       motors.setSpeeds(-200, 200);
-    else
+    }
+    else{
       motors.setSpeeds(200, -200);
-      
+    }
     reflectanceSensors.calibrate();
 
     // Since our counter runs to 80, the total delay will be
@@ -155,58 +150,8 @@ void setup(){
   // TIL KJØRING FERDIG
 }
 
-/** One snore lasts ca 4 seconds. If you write 12, there will be 3 snores. If you write 11,
-there will therefore be 2 snores, and it'll last ca 8 seconds. */
-void snoore(int durationSeconds){
-  for(int i = 0; i < durationSeconds/4; i++){
-    for(int i = 0; i < 220; i += 5){
-       tone(speakerOut, 31 + i, 23);
-       delay(24); 
-    }
-    delay(150);
-    for(int i = 1800; i > 0; i -= 25){
-      tone(speakerOut, 31 + i, 25);
-      delay(25);
-    }
-    delay(1000);
-   }
- }
 
 
-void happy(int durationSeconds){
-  int tones[] = {2093, 2349, 2794, 3136, 3520, 3951};
-  int randnum;
-  int milliseconds = 0;
-  boolean turn = true;
-  
-  while(milliseconds < durationSeconds*1000){
-      randnum = random(0,6);
-    if(turn){
-      tone(speakerOut, tones[randnum], 180*1.2);
-      delay(200*1.2);
-      milliseconds += 200*1.2;
-      turn = false;
-    }else{
-      tone(speakerOut, tones[randnum], 80*1.2);
-      delay(100*1.2);
-      milliseconds += 100*1.2;
-      turn = true;
-    }
-  }
-}
-
-void sad(int durationSeconds){
-  int tones[] = {123,131,117,110};
-  int randnum;
-  int milliseconds;
-  
-  while(milliseconds < durationSeconds*1000){
-    randnum = random(0,4);
-    tone(speakerOut, tones[randnum]*4, 800);
-    delay(800); 
-     milliseconds += 800; 
-  }
-} 
 
 void driving(){
   unsigned int sensors[6];
@@ -279,16 +224,16 @@ void loop(){
   if (time - timePost1 > 10000){
      post1 = true;
   }
-  if (time - timePost2 > 20000){
+  else if (time - timePost2 > 20000){
      post2 = true;
   }
-  if (time - timePost3 > 30000){
+  else if (time - timePost3 > 30000){
      post3 = true;
   }
-  if ((time - timePost4 > 40000) || (hunger4 >= 5)){
+  else if ((time - timePost4 > 40000) || (hunger4 >= 5)){
      post4 = true;
   }
-  if (time - timePost5 > 50000){
+  else if (time - timePost5 > 50000){
      post5 = true;
   }
   
@@ -301,7 +246,7 @@ void loop(){
     timePost1 = millis();
     hunger4++;
   }  
-  if (post2 == true && sensorP2 == true){
+  else if (post2 == true && sensorP2 == true){
     delay(500);
     post2 = false;
     timePost2 = millis();
@@ -311,20 +256,20 @@ void loop(){
      //dette er det siste som gjøres på posten
     
   }
-  if (post3 == true && sensorP3 == true){
+  else if (post3 == true && sensorP3 == true){
     post3 = false;
     timePost3 = millis();
     hunger4++;
    
   }
-  if (post4 == true && sensorP4 == true){
+  else if (post4 == true && sensorP4 == true){
     hunger4 = 0;
     
     post4 = false;
     timePost4 = millis();
    
   }
-  if (post5 == true && sensorP5 == true){
+  else if (post5 == true && sensorP5 == true){
    
     touchValueR = digitalRead(touchInputR);
      touchValueL = digitalRead(touchInputL);
@@ -338,9 +283,9 @@ void loop(){
     post5 = false;
     timePost5 = millis();
     happy5 = true;
-   }
-   
   }
-  delay(1000);
+   
+
+  //delay(1000);
 }
   
