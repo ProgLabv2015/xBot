@@ -155,26 +155,6 @@ void setup(){
   // TIL KJØRING FERDIG
 }
 
-int getCount(){
- micValue = analogRead(micInput);
-  if (micValue > 500){
-    count +=1;
-    timeWaited = 0;
-    while(timeWaited < waitingTime){
-      micValue = analogRead(micInput);
-      if (micValue > 500){
-        count +=1;
-      }
-      timeWaited += 100;
-      delay(50);
-    }
-    timeWaited = 0;
-    return count;
-  }else{
-   return getCount();
-  }
-}
-
 /** One snore lasts ca 4 seconds. If you write 12, there will be 3 snores. If you write 11,
 there will therefore be 2 snores, and it'll last ca 8 seconds. */
 void snoore(int durationSeconds){
@@ -291,7 +271,6 @@ void driving(){
 
 void loop(){
 
-  happy(10);
   
   /*sett inn kode for når de forskjellige tilstandene skal være true og false
   */
@@ -313,118 +292,40 @@ void loop(){
      post5 = true;
   }
   
-   /* Sett inn kode for å finne ut hvilken stasjon/post den er på
-  Her registrerer  mikrofonen en lyd. hvis den registrerer flere lyder innen den 10 sekunder, saa oeker counteren.
-  */
-  /*micValue = analogRead(micInput);
-  if (micValue > 500){
-    count +=1;
-    timeWaited = 0;
-    while(timeWaited < waitingTime){
-      micValue = analogRead(micInput);
-      if (micValue > 500){
-        count +=1;
-      }
-      timeWaited += 100;
-      delay(50);
-    }
-    timeWaited = 0;
-  }*/
+  driving();
   
-  
- // her sjekker den hva counteren er og setter tilsvarende SoundPost til true
-  /*if(count>2 && count < 20){
-    soundP1 = true;
-  }
-  if(count>20 && count < 40){
-    soundP2 = true;
-  }
-  if(count>40 && count < 60){
-    soundP3 = true;
-  }
-  if(count>60 && count < 80){
-    soundP4 = true;
-  }
-  if(count>80 && count < 100){
-    soundP5 = true;
-  }
-  count = 0;*/
   
   if (post1==true && sensorP1 == true){
-   count = getCount();
-   if(count>2 && count < 20){
-    soundP1 = true;
-  }
-  
-  // KJØRING
-  
-  
-  if (soundP1){
+    delay(500);
     post1 = false;
     timePost1 = millis();
     hunger4++;
-  }
-    /* sett inn kode for oppførsel på post1
-    ...
-    */
-    
-    //dette er det siste som gjøres på posten
-    
   }  
   if (post2 == true && sensorP2 == true){
-    /* sett inn kode for oppførsel på post2
-    ...
-    */
-   count = getCount();
-   if(count>20 && count < 40){
-    soundP2 = true;
-  }
-  if(soundP2){
-   post2 = false;
+    delay(500);
+    post2 = false;
     timePost2 = millis();
     hunger4++;
-  }
+  
     
      //dette er det siste som gjøres på posten
     
   }
   if (post3 == true && sensorP3 == true){
-    /* sett inn kode for oppførsel på post3
-    ...
-    */
-    count = getCount();
-   if(count>40 && count < 60){
-    soundP3 = true;
-   }
-   if(soundP3){
     post3 = false;
     timePost3 = millis();
     hunger4++;
-   }
-    
-     //dette er det siste som gjøres på posten
-    
+   
   }
   if (post4 == true && sensorP4 == true){
-   count = getCount();
-   if(count>60 && count < 80){
-    soundP4 = true;
-   }
-   if(soundP4){
     hunger4 = 0;
     
     post4 = false;
     timePost4 = millis();
-   }
-    
+   
   }
   if (post5 == true && sensorP5 == true){
-   count = getCount();
-   if(count>80 && count < 100){
-    soundP5 = true;
-   }
-   if(soundP5){
-    
+   
     touchValueR = digitalRead(touchInputR);
      touchValueL = digitalRead(touchInputL);
     if (touchValueR == HIGH){
@@ -440,20 +341,6 @@ void loop(){
    }
    
   }
-  
-  Serial.println(time);
-  Serial.println("Post1: "); 
-  Serial.println(timePost1);
-  Serial.println("Post2: "); 
-  Serial.println(timePost2);
-  Serial.println("Post3: "); 
-  Serial.println(timePost3);
-  Serial.println("Post4: "); 
-  Serial.println(timePost4);
-  Serial.println("Post5: "); 
-  Serial.println(timePost5);
-  Serial.println(" ");
-  
   delay(1000);
 }
   
