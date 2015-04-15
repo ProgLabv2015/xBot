@@ -180,22 +180,35 @@ void loop(){
   count = 0;*/
   
   if (post1==true && sensorP1 == true){
-   count = getCount();
-   if(count>2 && count < 20){
-    soundP1 = true;
-  }
-  if (soundP1){
+    /* sett inn kode for oppførsel på post1
+    ...
+    */
+    PLab_motors.backward(200,5);
+    PLab_motors.turnRight(200,60);
+    PLab_motors.turnLeft(200,180);
+    PLab_motors.forward(200, 7);
+    PLab_motors.turnRight(200,360);
+    PLab_motors.backward(200,7);
+    PLab_motors.turnLeft(200,180);
+    PLab_motors.forward(200, 7);
+    PLab_motors.turnRight(200,360);
+    PLab_motors.backward(200,7);
+    PLab_motors.turnRight(200,90);
+    PLab_motors.forward(200, 7);
+    PLab_motors.turnRight(200,360);
+    PLab_motors.backward(200,7);
+    PLab_motors.turnLeft(200,180);
+    PLab_motors.forward(200, 7);
+    PLab_motors.turnRight(200,360);
+    PLab_motors.backward(200,7);
+    PLab_motors.turnRight(200,120);
+    
+    
+    //dette er det siste som gjøres på posten
     post1 = false;
     timePost1 = millis();
     hunger4++;
   }
-    /* sett inn kode for oppførsel på post1
-    ...
-    */
-    
-    //dette er det siste som gjøres på posten
-    
-  }  
   if (post2 == true && sensorP2 == true){
     /* sett inn kode for oppførsel på post2
     ...
