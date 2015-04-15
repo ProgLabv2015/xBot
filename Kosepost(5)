@@ -1,0 +1,53 @@
+
+
+#include <NewPing.h>
+
+
+const int buzzer = 5;
+const int echoPin = 6;
+const int triggerPin = 7;
+#define MAX_DISTANCE 20
+long dist;
+
+NewPing sonar(triggerPin, echoPin, MAX_DISTANCE);
+boolean lastState = false;
+boolean currentState = false;
+
+
+
+
+
+
+
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(buzzer, OUTPUT);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  digitalWrite(triggerPin, LOW);
+  
+  
+}
+
+
+
+void loop()
+{
+  
+  
+
+lastState = currentState;
+dist = sonar.ping_cm();
+currentState = dist > 0 && dist < 10;
+if (currentState ==true && lastState == true){
+  digitalWrite(buzzer, HIGH);
+  delay(2000);
+  digitalWrite(buzzer, LOW);
+  }
+  delay(2000);
+    
+
+
+
+}
