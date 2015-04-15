@@ -6,7 +6,7 @@ boolean post1 = false;
 boolean post2 = false;
 boolean post3 = false;
 boolean post4 = false;
-boolean post5 = false; // Kosepost, skal brukes til touch-kos.
+boolean post5 = false; 
 
 boolean sensorP1 = false;
 boolean sensorP2 = false;
@@ -34,9 +34,6 @@ int toneLength;
 int count;
 int waitingTime;
 int timeWaited = 0;
-
-
-
 /*
 Sett inn initialverdier til post1
 */
@@ -48,30 +45,31 @@ Sett inn initialverdier til post2
 
 // til Post 3
 boolean happy3;
-int countP3 = 0;
-int lysP3 = 0;
+int count = 0;
+int lys = 0;
 const int ledPin1 = 12;
 const int ledPin2 = 11;
 int speakerOut = 9;
 int frequency = 880;
 
-/*
-Sett inn initialverdier til post4*/
-int hunger4 = 0;
+
 
 /*
 Sett inn initialverdier til post4
 */
+int hunger4 = 0;
+
+// til Post 5
+boolean happy5;
+int touchValueL;
+int touchValueR;
+int touchInputR=2;
+int touchInputL=4;
 
 
 void setup(){
  
-  // setup til lydsensor hovedbot
-  pinMode(micInput, INPUT);
-  Serial.begin(9600);
-  waitingTime = 10000;
-  micValue = 0;
-  
+
   /*
   sett inn setup til post1
   */
@@ -79,10 +77,13 @@ void setup(){
    /*
   sett inn setup til post2
   */
+    // setup til lydsensor hovedbot
+  pinMode(micInput, INPUT);
+  waitingTime = 10000;
+  micValue = 0;
   
   // til post 3
   pinMode(speakerOut, OUTPUT);
-  pinMode(micInput, INPUT);
   pinMode(ledPin1, OUTPUT);
   pinMode(ledPin2, OUTPUT);
   digitalWrite(ledPin1, LOW);
@@ -94,10 +95,30 @@ void setup(){
   */
   
   
-   /*
-  sett inn setup til post5
-  */
+   // post 5
+  pinMode(touchInputR, INPUT);
+  pinMode(touchInputL, INPUT);
   
+}
+
+void getCount(){
+ micValue = analogRead(micInput);
+  if (micValue > 500){
+    count +=1;
+    timeWaited = 0;
+    while(timeWaited < waitingTime){
+      micValue = analogRead(micInput);
+      if (micValue > 500){
+        count +=1;
+      }
+      timeWaited += 100;
+      delay(50);
+    }
+    timeWaited = 0;
+    return count;
+  }else{
+   return getCount();
+  }
 }
 
 void loop(){
@@ -114,21 +135,17 @@ void loop(){
   if (time - timePost3 > 30000){
      post3 = true;
   }
-  if ((time - timePost4 > 40000) || (hunger4 > 5)){
+  if ((time - timePost4 > 40000) || (hunger4 >= 5)){
      post4 = true;
   }
   if (time - timePost5 > 50000){
      post5 = true;
   }
   
-  
-  
- 
-  
-  /* Sett inn kode for å finne ut hvilken stasjon/post den er på
+   /* Sett inn kode for å finne ut hvilken stasjon/post den er på
   Her registrerer  mikrofonen en lyd. hvis den registrerer flere lyder innen den 10 sekunder, saa oeker counteren.
   */
-  micValue = analogRead(micInput);
+  /*micValue = analogRead(micInput);
   if (micValue > 500){
     count +=1;
     timeWaited = 0;
@@ -141,11 +158,11 @@ void loop(){
       delay(50);
     }
     timeWaited = 0;
-  }
+  }*/
   
   
-  // her sjekker den hva counteren er og setter tilsvarende SoundPost til true
-  if(count>2 && count < 20){
+ // her sjekker den hva counteren er og setter tilsvarende SoundPost til true
+  /*if(count>2 && count < 20){
     soundP1 = true;
   }
   if(count>20 && count < 40){
@@ -160,64 +177,95 @@ void loop(){
   if(count>80 && count < 100){
     soundP5 = true;
   }
-  count = 0;
-  
+  count = 0;*/
   
   if (post1==true && sensorP1 == true){
+   count = getCount();
+   if(count>2 && count < 20){
+    soundP1 = true;
+  }
+  if (soundP1){
+    post1 = false;
+    timePost1 = millis();
+    hunger4++;
+  }
     /* sett inn kode for oppførsel på post1
     ...
     */
     
     //dette er det siste som gjøres på posten
-    post1 = false;
-    timePost1 = millis();
-    soundP1 = false;
-    hunger4++;
+    
   }  
   if (post2 == true && sensorP2 == true){
     /* sett inn kode for oppførsel på post2
     ...
     */
+   count = getCount();
+   if(count>20 && count < 40){
+    soundP2 = true;
+  }
+  if(suondP2){
+   post2 = false;
+    timePost2 = millis();
+    hunger4++;
+  }
     
      //dette er det siste som gjøres på posten
-    post2 = false;
-    timePost2 = millis();
-    soundP2= false;
-    hunger4++;
+    
   }
   if (post3 == true && sensorP3 == true){
     /* sett inn kode for oppførsel på post3
     ...
     */
-    
-     //dette er det siste som gjøres på posten
+    count = getCount();
+   if(count>40 && count < 60){
+    soundP3 = true;
+   }
+   if(soundP3){
     post3 = false;
     timePost3 = millis();
-    soundP3= false;
     hunger4++;
+   }
+    
+     //dette er det siste som gjøres på posten
+    
   }
   if (post4 == true && sensorP4 == true){
+   count = getCount();
+   if(count>60 && count < 80){
+    soundP4 = true;
+   }
+   if(soundP4){
     hunger4 = 0;
-    //Plab_motors.turnRight(ZUMO_SPEED,45);
-    //Plab_motors.turnLeft(ZUMO_SPEED,45);
-    delay(500);
+    
     post4 = false;
     timePost4 = millis();
-    soundP4 = false;
+   }
+    
   }
   if (post5 == true && sensorP5 == true){
-    /* sett inn kode for oppførsel på post5
-    ...
-    */
+   count = getCount();
+   if(count>80 && count < 100){
+    soundP5 = true;
+   }
+   if(soundP5){
     
+    touchValueR = digitalRead(touchInputR);
+     touchValueL = digitalRead(touchInputL);
+    if (touchValueR == HIGH){
+      // do something
+    
+    } else if (touchValueL == HIGH){
+      // do something
+    }
      //dette er det siste som gjøres på posten
     post5 = false;
     timePost5 = millis();
-    soundP5 = false;
-    hunger4++;
+    happy5 = true;
+   }
+   
   }
   
-  /* Dette kan tas med for å teste at tidsvariablene fungerer
   Serial.println(time);
   Serial.println("Post1: "); 
   Serial.println(timePost1);
@@ -230,11 +278,7 @@ void loop(){
   Serial.println("Post5: "); 
   Serial.println(timePost5);
   Serial.println(" ");
+  
   delay(1000);
-  */
 }
-  
-  
-  
-  
   
