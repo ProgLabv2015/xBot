@@ -231,6 +231,47 @@ void sad(int durationSeconds){
   }
 } 
 
+
+void checkForSounds(){
+     /* Sett inn kode for å finne ut hvilken stasjon/post den er på
+  Her registrerer  mikrofonen en lyd. hvis den registrerer flere lyder innen den 10 sekunder, saa oeker counteren.
+  */
+  micValue = analogRead(micInput);
+  if (micValue > 500){
+    count +=1;
+    timeWaited = 0;
+    while(timeWaited < waitingTime){
+      micValue = analogRead(micInput);
+      if (micValue > 500){
+        count +=1;
+      }
+      timeWaited += 100;
+      delay(50);
+    }
+    timeWaited = 0;
+  }
+  
+  
+ // her sjekker den hva counteren er og setter tilsvarende SoundPost til true
+  if(count>2 && count < 20){
+    soundP1 = true;
+  }
+  if(count>20 && count < 40){
+    soundP2 = true;
+  }
+  if(count>40 && count < 60){
+    soundP3 = true;
+  }
+  if(count>60 && count < 80){
+    soundP4 = true;
+  }
+  if(count>80 && count < 100){
+    soundP5 = true;
+  }
+  
+}
+
+
 void driving(){
   unsigned int sensors[6];
 
@@ -251,24 +292,110 @@ void driving(){
   
   if((sensors[5] > 40 && sensors[5] < 160) && (sensors[0] > 40 && sensors[0] < 160) && post1 == true){
     motors.setSpeeds(0,0);
-    delay(2000);
+    checkForSounds();
+    count = getCount();
+    if(count>2 && count < 20){
+      soundP1 = true;
+    }
+  
+    if (soundP1){
+    post1 = false;
+    timePost1 = millis();
+    hunger4++;
+    
+    snoore(20);
+    }
+    motors.setSpeeds(MAX_SPEED, MAX_SPEED);
+
+    
+    //dette er det siste som gjøres på post1
   }
     if((sensors[5] > 790 && sensors[5] < 860) && (sensors[0] > 790 && sensors[0] < 860) && post2 == true){
-    motors.setSpeeds(0,0);
-    delay(3000);
+        motors.setSpeeds(0,0);
+        checkForSounds;
+       count = getCount();
+       if(count>20 && count < 40){
+        soundP2 = true;
+      }
+      if(soundP2){
+       post2 = false;
+        timePost2 = millis();
+        hunger4++;
+        
+        // VEMUND SIN DANSEMETODE HER
+        
+      }
+      motors.setSpeeds(MAX_SPEED, MAX_SPEED);
+     //dette er det siste som gjøres på post2
   }
     if((sensors[5] > 670 && sensors[5] < 770) && (sensors[0] > 670 && sensors[0] < 770) && post3 == true){
     motors.setSpeeds(0,0);
-    delay(4000);
+    checkForSounds;
+    count = getCount();
+   if(count>40 && count < 60){
+    soundP3 = true;
+   }
+   if(soundP3){
+    post3 = false;
+    timePost3 = millis();
+    hunger4++;
+    
+    delay(2000);
+    happy(12);
+   }
+   motors.setSpeeds(MAX_SPEED, MAX_SPEED);
+   
   }
     if((sensors[5] > 200 && sensors[5] < 300) && (sensors[0] > 200 && sensors[0] < 300) && post4 == true){
     motors.setSpeeds(0,0);
-    delay(5000);
-  }
+    checkForSounds;
+   count = getCount();
+   if(count>60 && count < 80){
+    soundP4 = true;
+   }
+   if(soundP4){
+    hunger4 = 0;
+    post4 = false;
+    timePost4 = millis();
+    
+    tone(3, 220, 5000);
+    delay(6000);
+   }  
+   motors.setSpeeds(MAX_SPEED, MAX_SPEED);
+ }
     if((sensors[5] > 600 && sensors[5] < 650) && (sensors[0] > 600 && sensors[0] < 650) && post5 == true){
     motors.setSpeeds(0,0);
-    delay(6000);
-  }
+    checkForSounds;
+   count = getCount();
+   if(count>80 && count < 100){
+    soundP5 = true;
+   }
+   if(soundP5){
+    
+    touchValueR = digitalRead(touchInputR);
+     touchValueL = digitalRead(touchInputL);
+    if (touchValueR == HIGH || touchValueL == HIGH){
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
+      digitalWrite(ledPin5, HIGH);
+      delay(50);
+      digitalWrite(ledPin5, LOW);
+      delay(50);
+    
+    } 
+     //dette er det siste som gjøres på posten
+    post5 = false;
+    timePost5 = millis();
+    happy5 = true;
+   }
+   motors.setSpeeds(MAX_SPEED, MAX_SPEED);
+ }
 
   // Here we constrain our motor speeds to be between 0 and MAX_SPEED.
   // Generally speaking, one motor will always be turning at MAX_SPEED
@@ -294,8 +421,6 @@ void driving(){
 
 void loop(){
 
-  happy(10);
-  
   /*sett inn kode for når de forskjellige tilstandene skal være true og false
   */
   time = millis();
@@ -316,142 +441,7 @@ void loop(){
      post5 = true;
   }
   
-   /* Sett inn kode for å finne ut hvilken stasjon/post den er på
-  Her registrerer  mikrofonen en lyd. hvis den registrerer flere lyder innen den 10 sekunder, saa oeker counteren.
-  */
-  /*micValue = analogRead(micInput);
-  if (micValue > 500){
-    count +=1;
-    timeWaited = 0;
-    while(timeWaited < waitingTime){
-      micValue = analogRead(micInput);
-      if (micValue > 500){
-        count +=1;
-      }
-      timeWaited += 100;
-      delay(50);
-    }
-    timeWaited = 0;
-  }*/
-  
-  
- // her sjekker den hva counteren er og setter tilsvarende SoundPost til true
-  /*if(count>2 && count < 20){
-    soundP1 = true;
-  }
-  if(count>20 && count < 40){
-    soundP2 = true;
-  }
-  if(count>40 && count < 60){
-    soundP3 = true;
-  }
-  if(count>60 && count < 80){
-    soundP4 = true;
-  }
-  if(count>80 && count < 100){
-    soundP5 = true;
-  }
-  count = 0;*/
-  
-  if (post1==true && sensorP1 == true){
-   count = getCount();
-   if(count>2 && count < 20){
-    soundP1 = true;
-  }
-  
-  // KJØRING
-  
-  
-  if (soundP1){
-    post1 = false;
-    timePost1 = millis();
-    hunger4++;
-  }
-    /* sett inn kode for oppførsel på post1
-    ...
-    */
-    
-    //dette er det siste som gjøres på posten
-    
-  }  
-  if (post2 == true && sensorP2 == true){
-    /* sett inn kode for oppførsel på post2
-    ...
-    */
-   count = getCount();
-   if(count>20 && count < 40){
-    soundP2 = true;
-  }
-  if(soundP2){
-   post2 = false;
-    timePost2 = millis();
-    hunger4++;
-  }
-    
-     //dette er det siste som gjøres på posten
-    
-  }
-  if (post3 == true && sensorP3 == true){
-    /* sett inn kode for oppførsel på post3
-    ...
-    */
-    count = getCount();
-   if(count>40 && count < 60){
-    soundP3 = true;
-   }
-   if(soundP3){
-    post3 = false;
-    timePost3 = millis();
-    hunger4++;
-   }
-    
-     //dette er det siste som gjøres på posten
-    
-  }
-  if (post4 == true && sensorP4 == true){
-   count = getCount();
-   if(count>60 && count < 80){
-    soundP4 = true;
-   }
-   if(soundP4){
-    hunger4 = 0;
-    
-    post4 = false;
-    timePost4 = millis();
-   }
-    
-  }
-  if (post5 == true && sensorP5 == true){
-   count = getCount();
-   if(count>80 && count < 100){
-    soundP5 = true;
-   }
-   if(soundP5){
-    
-    touchValueR = digitalRead(touchInputR);
-     touchValueL = digitalRead(touchInputL);
-    if (touchValueR == HIGH) || touchValueL == HIGH{
-      digitalWrite(ledPin5, HIGH);
-      delay(50);
-      digitalWrite(ledPin5, LOW);
-      delay(50);
-      digitalWrite(ledPin5, HIGH);
-      delay(50);
-      digitalWrite(ledPin5, LOW);
-      delay(50);
-      digitalWrite(ledPin5, HIGH);
-      delay(50);
-      digitalWrite(ledPin5, LOW);
-      delay(50);
-    
-    } 
-     //dette er det siste som gjøres på posten
-    post5 = false;
-    timePost5 = millis();
-    happy5 = true;
-   }
-   
-  }
+ driving();
   
   Serial.println(time);
   Serial.println("Post1: "); 
@@ -466,6 +456,5 @@ void loop(){
   Serial.println(timePost5);
   Serial.println(" ");
   
-  delay(1000);
 }
   
