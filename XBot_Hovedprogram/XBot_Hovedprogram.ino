@@ -178,6 +178,8 @@ int getCount(){
   }
 }
 
+
+// SOUNDS
 /** One snore lasts ca 4 seconds. If you write 12, there will be 3 snores. If you write 11,
 there will therefore be 2 snores, and it'll last ca 8 seconds. */
 void snoore(int durationSeconds){
@@ -194,7 +196,6 @@ void snoore(int durationSeconds){
     delay(1000);
    }
  }
-
 
 void happy(int durationSeconds){
   int tones[] = {2093, 2349, 2794, 3136, 3520, 3951};
@@ -230,12 +231,9 @@ void sad(int durationSeconds){
      milliseconds += 800; 
   }
 } 
-
+// SOUNDS done
 
 void checkForSounds(){
-     /* Sett inn kode for å finne ut hvilken stasjon/post den er på
-  Her registrerer  mikrofonen en lyd. hvis den registrerer flere lyder innen den 10 sekunder, saa oeker counteren.
-  */
   micValue = analogRead(micInput);
   if (micValue > 500){
     count +=1;
@@ -413,8 +411,6 @@ void driving(){
     m2Speed = MAX_SPEED;
 
   motors.setSpeeds(m1Speed, m2Speed);
-  delay(50);
-  motors.setSpeeds(0,0);
   }
 }
   
